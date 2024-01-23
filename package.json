@@ -1,0 +1,27 @@
+{
+  "name": "kraken-to-tak",
+  "version": "1.0.0",
+  "description": "Convert data from a Kraken SDR to TAK endpoints",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "compile": "tsc thetaDOAConverter.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/canaryradio/Kraken-to-TAK.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/canaryradio/Kraken-to-TAK/issues"
+  },
+  "homepage": "https://github.com/canaryradio/Kraken-to-TAK#readme",
+  "dependencies": {
+    "node-red": "^3.1.3"
+  },
+  "devDependencies": {
+    "tsc": "^2.0.4",
+    "typescript": "^5.3.3"
+  }
+}
