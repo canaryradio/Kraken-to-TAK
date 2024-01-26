@@ -1,4 +1,9 @@
 {
-    "outDir": "./dist/",
-    "include": ["src"]
+ 
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "sourceMap": true,
+        "esModuleInterop": true
+    },
+    "include": ["src", "main.ts"]
 }

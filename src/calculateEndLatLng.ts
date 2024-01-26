@@ -21,7 +21,7 @@ const calculateEndLatLng = (s_lat: number, s_lng: number, doa: number, my_bearin
     const e_lng_in_rad = s_lng_in_rad + Math.atan2(Math.sin(theta) * Math.sin(line_length / R) * Math.cos(s_lat_in_rad), Math.cos(line_length / R) - Math.sin(s_lat_in_rad) * Math.sin(e_lat_in_rad))
     const e_lat = radians_to_degrees(e_lat_in_rad)
     const e_lng = radians_to_degrees(e_lng_in_rad)
-    return parseFloat(e_lat.toFixed(6)), parseFloat(e_lng.toFixed(6))
+    return [parseFloat(e_lat.toFixed(6)), parseFloat(e_lng.toFixed(6))]
 }
 
 export default calculateEndLatLng
