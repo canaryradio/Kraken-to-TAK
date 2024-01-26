@@ -24,3 +24,4 @@ const calculateEndLatLng = (s_lat: number, s_lng: number, doa: number, my_bearin
     return parseFloat(e_lat.toFixed(6)), parseFloat(e_lng.toFixed(6))
 }
 
+export default calculateEndLatLng

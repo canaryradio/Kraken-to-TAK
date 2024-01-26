@@ -1,0 +1,4 @@
+{
+    "outDir": "./dist/",
+    "include": ["src"]
+}
