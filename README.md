@@ -4,6 +4,7 @@ The software will parse information collected by Kraken, convert to COT and XML 
 
 Planned improvements include:
 - Button for persisting the current line and generating a new UID
+- Work on filtering out by DOA Angle node
 - Dashboard for easier updating of Kraken and TAK endpoints
 - Simplified deployment
 
@@ -11,6 +12,9 @@ Planned improvements include:
 ```
 Load flow to Node Red server
 Adjust timestamp interval to desired frequency (5 seconds in the default)
+Change http://10.0.0.16:8081/DOA_value.html to http://<YOUR_KRAKEN_SERVER_IP>:8081/DOA_value.html
+Change TAK UDP URL to your TAK Server's URL
+* The filter by DOA Angle node will disregard packets with a DOA within your notch. I use this to not display DOA bearing for a transmitter that I know exists, but is not of concern. The notch reads clockwise and any DOA between the low number and high number will be discarded. The node is disabled by default.
 
 # edit thetaDOAConverter.ts
 npm run compile
