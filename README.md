@@ -5,10 +5,13 @@ The software will parse information collected by Kraken, convert to COT and XML 
 Planned improvements include:
 - Button for persisting the current line and generating a new UID
 - Dashboard for easier updating of Kraken and TAK endpoints
+- Simplified deployment
 
 # Quick Start
 ```
-npm install
+Load flow to Node Red server
+Adjust timestamp interval to desired frequency (5 seconds in the default)
+
 # edit thetaDOAConverter.ts
 npm run compile
 npx node-red # to run node red server
