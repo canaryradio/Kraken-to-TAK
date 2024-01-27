@@ -10,12 +10,12 @@ Planned improvements include:
 
 # Quick Start
 ```
-Load flow to Node Red server
-Adjust timestamp interval to desired frequency (5 seconds in the default)
-Change http://10.0.0.16:8081/DOA_value.html to http://<YOUR_KRAKEN_SERVER_IP>:8081/DOA_value.html
-Change TAK UDP URL to your TAK Server's URL
+-Load flow to Node Red server
+-Adjust timestamp interval to desired frequency (5 seconds in the default)
+-Change http://10.0.0.16:8081/DOA_value.html to http://<YOUR_KRAKEN_SERVER_IP>:8081/DOA_value.html
+-Change TAK UDP URL to your TAK Server's URL
 * The filter by DOA Angle node will disregard packets with a DOA within your notch. I use this to not display DOA bearing for a transmitter that I know exists, but is not of concern. The notch reads clockwise and any DOA between the low number and high number will be discarded. The node is disabled by default.
-There are default values hardcoded for latitude and longitude. Ensure you use a GPS for the Kraken's server or input location data for a stationary deployment
+-There are default values hardcoded for latitude and longitude. Ensure you use a GPS for the Kraken's server or input location data for a stationary deployment
 
 ```
 
