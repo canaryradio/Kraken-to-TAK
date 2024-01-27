@@ -10,7 +10,7 @@ Planned improvements include:
 
 # Quick Start
 ```
--Load flow to Node Red server
+-Load flow to Node Red server ./kraken-to-tak-v1.json
 -Adjust timestamp interval to desired frequency (5 seconds in the default)
 -Change http://10.0.0.16:8081/DOA_value.html to http://<YOUR_KRAKEN_SERVER_IP>:8081/DOA_value.html
 -Change TAK UDP URL to your TAK Server's URL

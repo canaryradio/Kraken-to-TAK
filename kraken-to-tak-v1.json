@@ -1,0 +1,229 @@
+[
+    {
+        "id": "9d8f0d08abfc4e12",
+        "type": "inject",
+        "z": "0833c215ec6eaf50",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "10",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 90,
+        "y": 160,
+        "wires": [
+            [
+                "0c728ce4bb4aa5b7"
+            ]
+        ]
+    },
+    {
+        "id": "0c728ce4bb4aa5b7",
+        "type": "http request",
+        "z": "0833c215ec6eaf50",
+        "name": "",
+        "method": "GET",
+        "ret": "txt",
+        "paytoqs": "ignore",
+        "url": "http://10.0.0.16:8081/DOA_value.html",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 270,
+        "y": 160,
+        "wires": [
+            [
+                "6c3928841fe909d6"
+            ]
+        ]
+    },
+    {
+        "id": "6c3928841fe909d6",
+        "type": "function",
+        "z": "0833c215ec6eaf50",
+        "name": "Parse Kraken Data",
+        "func": "var rawData = msg.payload.split(','); // \nvar parsedData = {\n    epochTime: parseInt(rawData[0]),\n    maxDOAAngle: parseFloat(rawData[1]),\n    confidenceValue: parseFloat(rawData[2]),\n    rssiPower: parseFloat(rawData[3]),\n    channelFrequency: parseInt(rawData[4]),\n    antennaArray: rawData[5],\n    latency: parseInt(rawData[6]),\n    stationID: rawData[7],\n    latitude: parseFloat(rawData[8]),\n    longitude: parseFloat(rawData[9]),\n    gpsHeading: parseFloat(rawData[10]),\n    compassHeading: parseFloat(rawData[11]),\n    mainHeadingSensor: rawData[12]\n};\n\n// Debug statements\nconsole.log(\"Parsed Data:\", parsedData);\n\nmsg.payload = parsedData; // \nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 160,
+        "wires": [
+            [
+                "254904163928f7fe",
+                "c59b8d63bc6eb051"
+            ]
+        ]
+    },
+    {
+        "id": "397a96bbb741b39d",
+        "type": "xml",
+        "z": "0833c215ec6eaf50",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 870,
+        "y": 160,
+        "wires": [
+            [
+                "c003c3add6c9fdc0",
+                "e21c39b0f59082ae"
+            ]
+        ]
+    },
+    {
+        "id": "254904163928f7fe",
+        "type": "function",
+        "z": "0833c215ec6eaf50",
+        "name": "Kraken Plot Marker",
+        "func": "// Assuming the parsed data is available in msg.payload\nconst parsedData = msg.payload;\n\n// Extracting necessary variables from parsed data\nconst {\n    epochTime,\n    maxDOAAngle,\n    confidenceValue,\n    rssiPower,\n    channelFrequency,\n    antennaArray,\n    latency,\n    stationID,\n    latitude,\n    longitude,\n    gpsHeading,\n    compassHeading,\n    mainHeadingSensor\n} = parsedData;\n\nconst dtD = new Date(epochTime);\nconst dtD5 = new Date(epochTime + 14400000);\n\n// Default values for latitude and longitude if they are blank\nconst defaultLatitude = 33.89320;\nconst defaultLongitude = -76.83175;\n\n// Use default values if latitude and/or longitude are blank\nconst finalLatitude = latitude !== 0 ? latitude : defaultLatitude;\nconst finalLongitude = longitude !== 0 ? longitude : defaultLongitude;\n\n// Creating a string with selected variables for the \"remarks\" field\nconst selectedVariables = {\n    maxDOAAngle,\n    confidenceValue,\n    rssiPower,\n    antennaArray,\n    latency,\n    stationID,\n    gpsHeading,\n    compassHeading,\n    mainHeadingSensor\n};\n\nconst remarks = Object.entries(selectedVariables)\n    .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)\n    .join(\", \");\n\nconst payload = {\n    event: {\n        $: {\n            version: \"2.0\",\n            type: \"b-m-p-s-m\",\n            uid: `${channelFrequency}`,\n            time: dtD.toISOString(),\n            start: dtD.toISOString(),\n            stale: dtD5.toISOString(),\n            how: \"h-g-i-g-o\"\n        },\n        point: [\n            {\n                $: {\n                    lat: `${finalLatitude}`,\n                    lon: `${finalLongitude}`,\n                    hae: \"9999999.0\",\n                    ce: \"35.0\",\n                    le: \"9999999.0\"\n                }\n            }\n        ],\n        detail: {\n            status: {\n                $: {\n                    readiness: \"true\"\n                }\n            },\n            archive: [{}, {}],\n            link: {\n                $: {\n                    uid: \"80085\",\n                    production_time: dtD.toISOString(),\n                    type: \"a-f-G-U-C\",\n                    parent_callsign: \"CanaryTAK\",\n                    relation: \"p-p\"\n                }\n            },\n            contact: {\n                $: {\n                    callsign: `Kraken Plot`\n                }\n            },\n            remarks: `${remarks}`,\n            color: {\n                $: {\n                    argb: \"-256\"\n                }\n            },\n            precisionlocation: {\n                $: {\n                    altsrc: \"Kraken\"\n                }\n            },\n            usericon: {\n                $: {\n                    iconsetpath: `COT_MAPPING_SPOTMAP/b-m-p-s-m/-256`\n                }\n            },\n            parsedData: parsedData\n        }\n    }\n};\n\nreturn { payload };\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 160,
+        "wires": [
+            [
+                "397a96bbb741b39d"
+            ]
+        ]
+    },
+    {
+        "id": "c003c3add6c9fdc0",
+        "type": "udp out",
+        "z": "0833c215ec6eaf50",
+        "name": "Multicast SA",
+        "addr": "239.2.3.1",
+        "iface": "",
+        "port": "6969",
+        "ipv": "udp4",
+        "outport": "",
+        "base64": false,
+        "multicast": "false",
+        "x": 1090,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "c59b8d63bc6eb051",
+        "type": "function",
+        "z": "0833c215ec6eaf50",
+        "name": "DOA Line",
+        "func": "const parsedData = msg.payload;\n\n// Extracting necessary variables from parsed data\nconst {\n    epochTime,\n    maxDOAAngle,\n    confidenceValue,\n    rssiPower,\n    channelFrequency,\n    antennaArray,\n    latency,\n    stationID,\n    latitude,\n    longitude,\n    gpsHeading,\n    compassHeading,\n    mainHeadingSensor\n} = parsedData;\n\nconst dtD = new Date(epochTime);\nconst dtD5 = new Date(epochTime + 14400000);\n\n// Default values for latitude and longitude if they are blank\nconst defaultLatitude = -21.6304224;\nconst defaultLongitude = 14.047172;\n\n// Use default values if latitude and/or longitude are blank\nconst finalLatitude = latitude !== 0 ? latitude : defaultLatitude;\nconst finalLongitude = longitude !== 0 ? longitude : defaultLongitude;\n\n// Creating a string with selected variables for the \"remarks\" field\nconst selectedVariables = {\n    maxDOAAngle,\n    confidenceValue,\n    rssiPower,\n    antennaArray,\n    latency,\n    stationID,\n    gpsHeading,\n    compassHeading,\n    mainHeadingSensor\n};\n\nconst remarks = Object.entries(selectedVariables)\n    .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)\n    .join(\", \");\n\n// Calculate the second point 6 kilometers away along the bearing maxDOAAngle\nconst secondPoint = calculateSecondPoint(finalLatitude, finalLongitude, maxDOAAngle, 6);\n\nconst payload = {\n    event: {\n        $: {\n            version: \"2.0\",\n            uid: \"df217027-b074-4111-9144-08f5f252ff1c\",\n            type: \"u-d-f\",\n            time: dtD.toISOString(),\n            start: dtD.toISOString(),\n            stale: dtD5.toISOString(),\n            how: \"h-e\",\n            access: \"Undefined\"\n        },\n        point: [\n            {\n                $: {\n                    lat: `${finalLatitude}`,\n                    lon: `${finalLongitude}`,\n                    hae: \"9999999.0\",\n                    ce: \"9999999.0\",\n                    le: \"9999999.0\"\n                }\n            },\n            {\n                $: {\n                    lat: `${secondPoint.latitude}`,\n                    lon: `${secondPoint.longitude}`,\n                    hae: \"9999999.0\",\n                    ce: \"9999999.0\",\n                    le: \"9999999.0\"\n                }\n            }\n        ],\n        detail: {\n            link: [\n                { $: { point: `${finalLatitude},${finalLongitude}` } },\n                { $: { point: `${secondPoint.latitude},${secondPoint.longitude}` } }\n            ],\n            __shapeExtras: { $: { cpvis: \"true\", editable: \"true\" } },\n            __milsym: { $: { id: \"10002500003406000000\" } },\n            labels_on: { $: { value: \"false\" } },\n            archive: {},\n            color: { $: { value: \"-256\" } },\n            contact: { $: { callsign: \"CanaryTAK\" } },\n            remarks: remarks,\n            strokeColor: { $: { value: \"-256\" } },\n            strokeWeight: { $: { value: \"3.0\" } },\n            strokeStyle: { $: { value: \"solid\" } }\n        }\n    }\n};\n\nreturn { payload };\n\n// Function to calculate the second point given the initial latitude, longitude, bearing, and distance\nfunction calculateSecondPoint(lat1, lon1, bearing, distance) {\n    const R = 6371; // Radius of the Earth in kilometers\n    const lat1Rad = toRadians(lat1);\n    const lon1Rad = toRadians(lon1);\n    const angularDistance = distance / R;\n    \n    const lat2Rad = Math.asin(Math.sin(lat1Rad) * Math.cos(angularDistance) + \n                             Math.cos(lat1Rad) * Math.sin(angularDistance) * Math.cos(toRadians(bearing)));\n    \n    const lon2Rad = lon1Rad + Math.atan2(Math.sin(toRadians(bearing)) * Math.sin(angularDistance) * Math.cos(lat1Rad),\n                                         Math.cos(angularDistance) - Math.sin(lat1Rad) * Math.sin(lat2Rad));\n    \n    const lat2 = toDegrees(lat2Rad);\n    const lon2 = toDegrees(lon2Rad);\n    \n    return { latitude: lat2, longitude: lon2 };\n}\n\n// Function to convert degrees to radians\nfunction toRadians(degrees) {\n    return degrees * Math.PI / 180;\n}\n\n// Function to convert radians to degrees\nfunction toDegrees(radians) {\n    return radians * 180 / Math.PI;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 220,
+        "wires": [
+            [
+                "a6a917c99644b539"
+            ]
+        ]
+    },
+    {
+        "id": "a6a917c99644b539",
+        "type": "xml",
+        "z": "0833c215ec6eaf50",
+        "name": "",
+        "property": "payload",
+        "attr": "",
+        "chr": "",
+        "x": 870,
+        "y": 220,
+        "wires": [
+            [
+                "c003c3add6c9fdc0",
+                "cd187dea00ae1a8c",
+                "e21c39b0f59082ae"
+            ]
+        ]
+    },
+    {
+        "id": "c654697d.c38d58",
+        "type": "switch",
+        "z": "0833c215ec6eaf50",
+        "d": true,
+        "name": "Filter by maxDOAAngle",
+        "property": "payload.maxDOAAngle",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "btwn",
+                "v": "30",
+                "vt": "num",
+                "v2": "120",
+                "v2t": "num"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 490,
+        "y": 220,
+        "wires": [
+            [],
+            []
+        ]
+    },
+    {
+        "id": "e21c39b0f59082ae",
+        "type": "udp out",
+        "z": "0833c215ec6eaf50",
+        "name": "TAK UDP",
+        "addr": "10.0.0.67",
+        "iface": "",
+        "port": "8087",
+        "ipv": "udp4",
+        "outport": "",
+        "base64": false,
+        "multicast": "false",
+        "x": 1100,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "cd187dea00ae1a8c",
+        "type": "debug",
+        "z": "0833c215ec6eaf50",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1080,
+        "y": 280,
+        "wires": []
+    }
+]
