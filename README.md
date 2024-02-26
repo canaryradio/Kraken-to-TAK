@@ -1,3 +1,7 @@
+https://youtu.be/aRU4gTaeH8s?feature=shared
+
+https://www.rtl-sdr.com/a-krakensdr-to-tak-interface-converter/
+
 Convert data from a Kraken SDR to TAK endpoints
 
 The software will parse information collected by Kraken, convert to COT and XML and send to common TAK interfaces. The length of the line is arbitrary. The line is 6km long, but has no correlation besides bearing to the transmitter. Intersecting bearing lines are necessary for determining the geolocation of a transmitter. 
